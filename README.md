@@ -20,23 +20,7 @@ display your todo list. `liste do "Anything I need to do"` adds
 to your todo list. Add to your terminal login messages list with 
 `liste add login "My Reminder"`.
 
-Copied straight from `liste help`:
-
-do task            :  add 'task' to the todo list
-
-add list task      :  add 'task' to 'list'
-
-disp list          :  display content of 'list'
-
-login              :  show your login list
-
-mark list done 1   :  remove line 1 from list
-
-edit list          :  open list in editor
-
-rmi                :  interactively remove lists
-
-rm list1 list2 etc :  remove lists list1, list2, etc
+Run `liste help` for more complete usage instructions.
 
 ### Contribute
 
