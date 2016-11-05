@@ -18,17 +18,24 @@ It doesn't get that much easier than this:
 Liste is not hard to use either, running `liste` by itself will 
 display your todo list. `liste do "Anything I need to do"` adds 
 to your todo list. Add to your terminal login messages list with 
-`liste add login "CTRL + D logs you out of bash automatically"`.
+`liste add login "My Reminder"`.
 
 Copied straight from `liste help`:
 
 do task            :  add 'task' to the todo list
+
 add list task      :  add 'task' to 'list'
+
 disp list          :  display content of 'list'
+
 login              :  show your login list
+
 mark list done 1   :  remove line 1 from list
+
 edit list          :  open list in editor
+
 rmi                :  interactively remove lists
+
 rm list1 list2 etc :  remove lists list1, list2, etc
 
 ### Contribute
@@ -41,5 +48,5 @@ The feature you want isn't going to come out of nowhere
 4. Push to the branch `git push origin my-new-feature`
 5. Create a new Pull Request on github
 
-+ [Daniel Ethridge](https://github.com/wlib) - author
++ [Daniel Ethridge](https://wlib.github.io) - author
 + [You](https://yourwebsite.com) - helped add...
