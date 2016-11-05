@@ -8,7 +8,7 @@ for your own system of notes and reminders.
 
 ## Installation
 
-It doesn't get that much harder than this:
+It doesn't get that much easier than this:
 
 + `sudo gem install liste`
 + `printf "\nliste login" >> ~/.bashrc`
