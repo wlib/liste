@@ -1,10 +1,12 @@
-require 'fileutils'
-require 'json'
+#!/usr/bin/env ruby
+# Functions used in liste
+# Daniel Ethridge
 
 Class Lib
   # Creates a new list
   def init()
     unless File.directory?("#{Dir.home}/.liste")
+      require 'fileutils'
       FileUtils.mkdir_p("#{Dir.home}/.liste")
     end
     File.open("#{Dir.home}/.liste/main.list", "w")
@@ -12,8 +14,15 @@ Class Lib
     exit
   end
 
+  # Make a list item and add to the json list file
+  def add()
+    require 'json'
+    
+  end
+
   # Pretty-prints a list's contents
   def disp(listname, style)
+    require 'json'
     listfile = File.read("#{Dir.home}/.liste/main.list") rescue init()
     listhash = JSON.parse(listfile)
     bullet = "\u2022"
