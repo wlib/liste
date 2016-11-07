@@ -2,58 +2,78 @@
 # Liste - reminders, notes, ideas on the go
 # Daniel Ethridge
 
-require 'fileutils'
-require 'json'
 require 'liste'
 
+# Get all our functions in here
 lib = Lib.new
 
-lib.args = ARGV.map(&:downcase)
+# 'argv' will be the lowercase version of 'ARGV', this helps for argument matching
+argv = ARGV.map(&:downcase)
+
+help = "\nUsage : `liste` or `liste [arguments]` or 
+`liste .listname \"task\"` or `liste .listname [arguments]`
+
+Liste is for those who have short-term memory and
+those who need constant reminders.
+You should add the line 'liste login' to your .bashrc
+
+When adding an item to a list, the content MUST contain whitespace to be
+selected, this is accomplished by adding quotes around your list item :
+`liste .list \"my content has whitespace\"` This is done to prevent the shell
+from splitting your content into seperate arguments.
+
+--------------------------------------------------
+
+\"task to do\"            :  add 'task' to the todo list
+.login \"task to do\"     :  add 'task' to the login list
+.anylist disp           :  display the contents of 'anylist'
+
+--------------------------------------------------
+
+If you find a bug, want extra features, or have a suggestion,
+make a branch on github : https://github.com/wlib/liste\n\n"
 
 # Just running `liste` (no arguments) will display content of the "todo" list
 if ARGV.empty?
   puts "Things to do...\n\n"
-  disp("todo", "number") rescue
+  lib.disp("todo", "number") rescue
     puts "...nothing here yet"; exit
   exit
 end
 
-case args[0]
+case argv[0]
   when "?", "h", "help", "-h", "--help"
-    puts "\nUsage : `liste` or `liste [arguments]`\n\n\
-    Liste is for those who have short-term memory and\n\
-    those who need constant reminders.\n\
-    You should add the line 'liste login' to your .bashrc\n\n\
-    do task            :  add 'task' to the todo list\n\
-    add list task      :  add 'task' to 'list'\n\
-    disp list          :  display content of 'list'\n\
-    login              :  show your login list\n\
-    mark list done 1   :  remove line 1 from list\n\
-    edit list          :  open list in editor\n\
-    rmi                :  interactively remove lists\n\
-    rm list1 list2 etc :  remove lists list1, list2, etc\n\n\
-    If you find a bug, want extra features, or have a suggestion, make a branch\n\
-    on github : https://github.com/wlib/liste\n\n"
+    puts help
   # This displays the "login" list
   when "login"
     puts "Your tasks...\n\n"
-    disp("login", "bullet") rescue
-      puts "\n...nothing here yet"; exit
-    exit
-end
-
-# Defines how the arguments are interpretted
-case args[1]
-  # Displays the content in any list
-  when "disp"
-    puts "Your list '#{ARGV[0]}'...\n\n"
-    disp("#{ARGV[1]}", "bullet") rescue
+    lib.disp("login", "bullet") rescue
       puts "\n...nothing here yet"; exit
     exit
   # Calls the edit shortcut
   when "edit"
-    edit_list()
+    lib.edit_list()
     exit
-  else
-    puts "Your first argument was not valid"
+end
+
+# Parse shell input in the format `liste .listname ["content" / arguments]`
+if argv[0].start_with?('.')
+  listname = ARGV[0][1..-1]
+  content = ARGV.select{ |e| e[/\s/] }
+  args = ARGV[1..-1].select{ |e| ! e[/\s/] }
+end
+
+# Pay attention that runs when 'args' is not empty, not 'argv'
+if ! args.empty? && ! content.empty?
+  lib.add(listname, content)
+end
+
+# More than one list argument can be run at a time
+case
+  # Displays the content in any list
+  when argv.include?("disp")
+    puts "Your list '#{listname}'...\n\n"
+    lib.disp("#{listname}", "bullet") rescue
+      puts "\n...nothing here yet"; exit      
+    exit
 end
