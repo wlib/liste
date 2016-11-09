@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # Functions used in liste
 # Daniel Ethridge
+# { :list1 => {:i1 => "item1", :i2 => "item2"} }, { :list2 => {:i1 => "item1", :i2 => "item2"} }
 
 Class Lib
   # Creates a new list
