@@ -59,21 +59,28 @@ end
 # Parse shell input in the format `liste .listname ["content" / arguments]`
 if argv[0].start_with?('.')
   listname = ARGV[0][1..-1]
-  content = ARGV.select{ |e| e[/\s/] }
-  args = ARGV[1..-1].select{ |e| ! e[/\s/] }
+  content = ARGV.select{ |e| e[/\s/] }.join(' ')
+  args = ARGV[1..-1].select{ |e| ! e[/\s/] }.map(&:downcase)
 end
 
 # Pay attention that runs when 'args' is not empty, not 'argv'
 if ! args.empty? && ! content.empty?
-  lib.add(listname, content)
+  puts listname, args, content
+elsif args.empty? && ! content.empty?
+  hash = { :"#{listname}" => {:i1 => "#{content}"} }
+  json = JSON.pretty_generate(hash)
+  puts json
 end
 
 # More than one list argument can be run at a time
 case
   # Displays the content in any list
-  when argv.include?("disp")
+  when args.include?("disp")
     puts "Your list '#{listname}'...\n\n"
     lib.disp("#{listname}", "bullet") rescue
       puts "\n...nothing here yet"; exit      
     exit
 end
+
+# If nothing is caught then throw an error message
+puts "Something went wrong, I'm not sure what you want me to do"; exit
