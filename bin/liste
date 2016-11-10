@@ -62,7 +62,7 @@ end
 content = ARGV.select{ |e| e[/\s/] }.join(' ')
 args = ARGV[1..-1].select{ |e| ! e[/\s/] }.map(&:downcase)
 
-# If liste is run normally, add content to main.list
+# Add content to the todo list, alternatively add to any other list
 if ! listname.nil?
   add(listname, content)
   exit
