@@ -14,14 +14,37 @@ module Liste
     puts "New list created in '#{Dir.home}/.liste/main.list'\n\n"
   end
 
-  # Make a list item and add to the json list file
-  def add(listname, content, path="#{Dir.home}/.liste/main.list")
+  def newlist(listname, path="#{Dir.home}/.liste/main.list")
     require 'json'
-    file = File.open("#{path}", 'r+')
+    file = File.open("#{path}", 'r')
     listfile = file.read
     file.close
     file = File.open("#{path}", 'w')
-    listhash = JSON.parse(listfile)
+    if listfile.empty?
+      file.puts "{\n}"
+      puts "new list created, repeat last command"
+      exit
+    elsif ! listfile.empty?
+      listhash = { :"#{listname}" => "new list : #{listname}" }
+      hash = JSON.parse(list)
+      newhash = hash.merge!(listhash)
+      json = JSON.pretty_generate(newhash)
+      file.puts json
+      file.close
+      puts "new list : #{listname} has been created, repeat last command"
+      exit
+    end
+  end
+
+  # Make a list item and add to the json list file
+  def add(listname, content, path="#{Dir.home}/.liste/main.list")
+    require 'json'
+    file = File.open("#{path}", 'r')
+    listfile = file.read
+    file.close
+    file = File.open("#{path}", 'w')
+    listhash = JSON.parse(listfile) rescue newlist(listname)
+    if ! listhash.keys.include? listname; newlist(listname) end
     listcontent = listhash[listname]
     i = 0
     while listcontent.keys.include? "l#{i}"
