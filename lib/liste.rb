@@ -27,6 +27,7 @@ module Liste
     elsif ! listfile.empty?
       listhash = { :"#{listname}" => {:l0 => "new list : #{listname}" } }
       hash = JSON.parse(listfile)
+      if hash.keys.include? listname; puts "list already exists"; exit end
       newhash = hash.merge!(listhash)
       json = JSON.pretty_generate(newhash)
       file.puts json
