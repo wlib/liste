@@ -2,10 +2,8 @@
 # Liste - reminders, notes, ideas on the go
 # Daniel Ethridge
 
-require 'liste'
-
-# Get all our functions in here
-lib = Lib.new
+require "liste"
+include Liste
 
 # 'argv' will be the lowercase version of 'ARGV', this helps for argument matching
 argv = ARGV.map(&:downcase)
@@ -36,7 +34,7 @@ make a branch on github : https://github.com/wlib/liste\n\n"
 # Just running `liste` (no arguments) will display content of the "todo" list
 if ARGV.empty?
   puts "Things to do...\n\n"
-  lib.disp("todo", "number") rescue
+  disp("todo", "number") rescue
     puts "...nothing here yet"; exit
   exit
 end
@@ -47,12 +45,12 @@ case argv[0]
   # This displays the "login" list
   when "login"
     puts "Your tasks...\n\n"
-    lib.disp("login", "bullet") rescue
+    disp("login", "bullet") rescue
       puts "\n...nothing here yet"; exit
     exit
   # Calls the edit shortcut
   when "edit"
-    lib.edit_list()
+    edit_list()
     exit
 end
 
@@ -63,13 +61,9 @@ if argv[0].start_with?('.')
   args = ARGV[1..-1].select{ |e| ! e[/\s/] }.map(&:downcase)
 end
 
-# Pay attention that runs when 'args' is not empty, not 'argv'
-if ! args.empty? && ! content.empty?
-  puts listname, args, content
-elsif args.empty? && ! content.empty?
-  hash = { :"#{listname}" => {:i1 => "#{content}"} }
-  json = JSON.pretty_generate(hash)
-  puts json
+# If liste is run normally, add content to main.list
+unless content.empty?
+  add(listname, content)
 end
 
 # More than one list argument can be run at a time
@@ -77,7 +71,7 @@ case
   # Displays the content in any list
   when args.include?("disp")
     puts "Your list '#{listname}'...\n\n"
-    lib.disp("#{listname}", "bullet") rescue
+    disp("#{listname}", "bullet") rescue
       puts "\n...nothing here yet"; exit      
     exit
 end
