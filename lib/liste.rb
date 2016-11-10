@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # Functions used in liste
 # Daniel Ethridge
-# { :list1 => {:i1 => "item1", :i2 => "item2"} }, { :list2 => {:i1 => "item1", :i2 => "item2"} }
 
 module Liste
   # Creates a new list
@@ -21,18 +20,18 @@ module Liste
     file.close
     file = File.open("#{path}", 'w')
     if listfile.empty?
-      file.puts "{\n}"
+      hash = { :todo => {:l0 => "This is a placeholder"} }
+      json = JSON.pretty_generate(hash)
+      file.puts json
       puts "new list created, repeat last command"
-      exit
     elsif ! listfile.empty?
-      listhash = { :"#{listname}" => "new list : #{listname}" }
-      hash = JSON.parse(list)
+      listhash = { :"#{listname}" => {:l0 => "new list : #{listname}" } }
+      hash = JSON.parse(listfile)
       newhash = hash.merge!(listhash)
       json = JSON.pretty_generate(newhash)
       file.puts json
       file.close
       puts "new list : #{listname} has been created, repeat last command"
-      exit
     end
   end
 
