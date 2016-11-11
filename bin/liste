@@ -63,12 +63,14 @@ content = ARGV.select{ |e| e[/\s/] }.join(' ')
 args = ARGV[1..-1].select{ |e| ! e[/\s/] }.map(&:downcase)
 
 # Add content to the todo list, alternatively add to any other list
-if ! listname.nil?
-  add(listname, content)
-  exit
-elsif listname.nil?
-  add("todo", content)
-  exit
+unless content.empty?
+  if ! listname.nil?
+    add(listname, content) rescue newlist(listname, content)
+    exit
+  elsif listname.nil?
+    add("todo", content) rescue newlist("todo", content)
+    exit
+  end
 end
 
 # More than one list argument can be run at a time

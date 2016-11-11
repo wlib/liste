@@ -13,27 +13,28 @@ module Liste
     puts "New list created in '#{Dir.home}/.liste/main.list'\n\n"
   end
 
-  def newlist(listname, path="#{Dir.home}/.liste/main.list")
+  def newlistfile(listname, content, path)
+  	hash = { :"#{listname}" => {:l0 => content} }
+    json = JSON.pretty_generate(hash)
+    file = File.open("#{path}", 'w')
+    file.puts json
+    file.close
+    puts "new list '#{listname}' created"
+  end
+
+  def newlist(listname, content="This is a placeholder", path="#{Dir.home}/.liste/main.list")
     require 'json'
     file = File.open("#{path}", 'r')
     listfile = file.read
     file.close
+    if listfile.nil? || listfile.empty?; newlistfile(listname, content, path); exit end
+    listhash = { :"#{listname}" => {:l0 => content } }
+    hash = JSON.parse(listfile)
+    newhash = hash.merge!(listhash)
+    json = JSON.pretty_generate(newhash)
     file = File.open("#{path}", 'w')
-    if listfile.empty?
-      hash = { :todo => {:l0 => "This is a placeholder"} }
-      json = JSON.pretty_generate(hash)
-      file.puts json
-      puts "new list created, repeat last command"
-    elsif ! listfile.empty?
-      listhash = { :"#{listname}" => {:l0 => "new list : #{listname}" } }
-      hash = JSON.parse(listfile)
-      if hash.keys.include? listname; puts "list already exists"; exit end
-      newhash = hash.merge!(listhash)
-      json = JSON.pretty_generate(newhash)
-      file.puts json
-      file.close
-      puts "new list : #{listname} has been created, repeat last command"
-    end
+    file.puts json
+    file.close
   end
 
   # Make a list item and add to the json list file
@@ -42,8 +43,7 @@ module Liste
     file = File.open("#{path}", 'r')
     listfile = file.read
     file.close
-    file = File.open("#{path}", 'w')
-    listhash = JSON.parse(listfile) rescue newlist(listname)
+    listhash = JSON.parse(listfile)
     if ! listhash.keys.include? listname; newlist(listname) end
     listcontent = listhash[listname]
     i = 0
@@ -53,22 +53,44 @@ module Liste
     newcontent = { "l#{i}" => content }
     listcontent.merge!(newcontent)
     newjson = JSON.pretty_generate(listhash)
+    file = File.open("#{path}", 'w')
     file.puts newjson
     file.close
   end
 
-  # Pretty-prints a list's contents
-  def disp(listname, style)
+  def putlines(listname)
     require 'json'
     file = File.open("#{Dir.home}/.liste/main.list") rescue init()
     listfile = file.read
     listhash = JSON.parse(listfile)
-    bullet = "\u2022"
-    check = "\u2714"
+    linesout = []
     i = 0
     while i < listhash[listname].count
-      puts listhash[listname]["l#{i}"]
+      line = listhash[listname]["l#{i}"]
+      linesout << "#{line}"
       i += 1
+    end
+    linesout
+  end
+
+  # Pretty-prints a list's contents
+  def disp(listname, style)
+    bullet = "\u2022"
+    check = "\u2714"
+    linesout = putlines(listname)
+    case style
+      when "bullet"
+      linesout.each do |line|
+        puts " #{bullet} #{line}"
+      end
+      when "check"
+        linesout.each do |line|
+          puts " #{check} #{line}"
+        end
+      when "number"
+        linesout.each.with_index do |line, i|
+          puts "#{i+1}. #{line}"
+        end
     end
     print "\n"
   end
